@@ -1,6 +1,7 @@
 import os
 import requests
 import argparse
+from common import download_image, get_file_extension_from_url
 
 
 def fetch_xkcd_comic(comic_num):
@@ -13,10 +14,9 @@ def fetch_xkcd_comic(comic_num):
 
 
 def save_xkcd_comic(image_url, folder_name='comics'):
-    os.makedirs(folder_name, exist_ok=True)
-    response = requests.get(image_url)
-    with open(os.path.join(folder_name, 'xkcd_comic.jpg'), 'wb') as file:
-        file.write(response.content)
+    extension = get_file_extension_from_url(image_url)
+    save_path = os.path.join(folder_name, f'xkcd_comic{extension}')
+    download_image(image_url, save_path)
 
 
 def main():
