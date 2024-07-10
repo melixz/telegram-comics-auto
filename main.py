@@ -9,6 +9,7 @@ def fetch_xkcd_comic(comic_num):
     response = requests.get(url)
     response.raise_for_status()
     comic_data = response.json()
+    print(comic_data['alt'])
     image_url = comic_data['img']
     return image_url
 
