@@ -14,7 +14,6 @@ async def send_image(bot, chat_id, image_path):
     try:
         with open(image_path, 'rb') as f:
             await bot.send_photo(chat_id=chat_id, photo=f)
-            raise ValueError("Тестовое исключение для проверки удаления файла")
     finally:
         delete_file(image_path)
 
@@ -22,12 +21,12 @@ async def send_image(bot, chat_id, image_path):
 def delete_file(file_path):
     try:
         os.remove(file_path)
-        return True, f"Файл {file_path} был успешно удален."
+        print(f"Файл {file_path} был успешно удален.")
     except Exception as e:
-        return False, f"Ошибка при удалении файла {file_path}: {e}"
+        print(f"Ошибка при удалении файла {file_path}: {e}")
 
 
-async def post_images_to_telegram(directory, delay):
+async def post_images_to_telegram(directory):
     load_dotenv()
     try:
         token = os.environ['TELEGRAM_BOT_TOKEN']
@@ -38,26 +37,21 @@ async def post_images_to_telegram(directory, delay):
     bot = telegram.Bot(token)
 
     async with bot:
-        while True:
-            images = get_image_files(directory)
-
-            for image_path in images:
-                try:
-                    await send_image(bot, chat_id, image_path)
-                except Exception as e:
-                    print(f"Ошибка при отправке изображения {image_path}: {e}")
-                finally:
-                    success, message = delete_file(image_path)
-                    print(message)
-                await asyncio.sleep(delay)
+        images = get_image_files(directory)
+        if images:
+            image_path = images[0]
+            try:
+                await send_image(bot, chat_id, image_path)
+            except Exception as e:
+                print(f"Ошибка при отправке изображения {image_path}: {e}")
+        else:
+            print("В директории нет изображений для публикации.")
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Публиковать фотографии в Telegram-канал с заданной периодичностью')
+    parser = argparse.ArgumentParser(description='Публиковать одно фото из директории в Telegram-канал')
     parser.add_argument('directory', type=str, help='Директория с фотографиями')
-    parser.add_argument('--delay', type=int, default=14400,
-                        help='Задержка между публикациями в секундах (по умолчанию 4 часа)')
 
     args = parser.parse_args()
 
-    asyncio.run(post_images_to_telegram(args.directory, args.delay))
+    asyncio.run(post_images_to_telegram(args.directory))
