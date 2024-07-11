@@ -1,5 +1,4 @@
 import os
-import random
 import argparse
 from dotenv import load_dotenv
 import telegram
@@ -7,8 +6,8 @@ import asyncio
 
 
 def get_image_files(directory):
-    return [os.path.join(directory, file) for file in os.listdir(directory) if
-            os.path.isfile(os.path.join(directory, file))]
+    return sorted([os.path.join(directory, file) for file in os.listdir(directory) if
+                   os.path.isfile(os.path.join(directory, file))])
 
 
 async def send_image(bot, chat_id, image_path):
@@ -31,17 +30,16 @@ async def post_images_to_telegram(directory, delay):
     chat_id = os.getenv("TELEGRAM_CHANNEL_ID")
 
     if not token:
-        raise ValueError("TELEGRAM_BOT_TOKEN environment variable не установлен")
+        raise ValueError("Переменная окружения TELEGRAM_BOT_TOKEN не установлена")
 
     if not chat_id:
-        raise ValueError("TELEGRAM_CHANNEL_ID environment variable не установлен")
+        raise ValueError("Переменная окружения TELEGRAM_CHANNEL_ID не установлена")
 
     bot = telegram.Bot(token)
 
     async with bot:
         while True:
             images = get_image_files(directory)
-            random.shuffle(images)
 
             for image_path in images:
                 await send_image(bot, chat_id, image_path)
