@@ -1,5 +1,4 @@
 import os
-import time
 import random
 import argparse
 from dotenv import load_dotenv
@@ -15,6 +14,15 @@ def get_image_files(directory):
 async def send_image(bot, chat_id, image_path):
     with open(image_path, 'rb') as f:
         await bot.send_photo(chat_id=chat_id, photo=f)
+        delete_file(image_path)  # Удаление файла после отправки
+
+
+def delete_file(file_path):
+    try:
+        os.remove(file_path)
+        print(f"Файл {file_path} был успешно удален.")
+    except Exception as e:
+        print(f"Ошибка при удалении файла {file_path}: {e}")
 
 
 async def post_images_to_telegram(directory, delay):
@@ -48,5 +56,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # Замена аргумента directory на "comics"
-    asyncio.run(post_images_to_telegram("comics", args.delay))
+    asyncio.run(post_images_to_telegram(args.directory, args.delay))
