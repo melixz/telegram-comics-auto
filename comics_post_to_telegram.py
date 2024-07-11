@@ -22,9 +22,9 @@ async def send_image(bot, chat_id, image_path):
 def delete_file(file_path):
     try:
         os.remove(file_path)
-        print(f"Файл {file_path} был успешно удален.")
+        return True, f"Файл {file_path} был успешно удален."
     except Exception as e:
-        print(f"Ошибка при удалении файла {file_path}: {e}")
+        return False, f"Ошибка при удалении файла {file_path}: {e}"
 
 
 async def post_images_to_telegram(directory, delay):
@@ -46,6 +46,8 @@ async def post_images_to_telegram(directory, delay):
 
             for image_path in images:
                 await send_image(bot, chat_id, image_path)
+                success, message = delete_file(image_path)
+                print(message)
                 await asyncio.sleep(delay)
 
 

@@ -8,7 +8,7 @@ def download_image(url, save_path):
     response.raise_for_status()
     with open(save_path, 'wb') as file:
         file.write(response.content)
-    print(f"Изображение сохранено как {save_path}")
+    return save_path
 
 
 def get_file_extension_from_url(url):
@@ -24,7 +24,8 @@ def main():
 
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
-    download_image(url, save_path)
+    saved_path = download_image(url, save_path)
+    print(f"Изображение сохранено как {saved_path}")
 
 
 if __name__ == "__main__":

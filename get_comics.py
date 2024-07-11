@@ -9,15 +9,15 @@ def fetch_xkcd_comic(comic_number):
     response = requests.get(url)
     response.raise_for_status()
     comic_data = response.json()
-    print(comic_data['alt'])
     image_url = comic_data['img']
-    return image_url
+    return comic_data['alt'], image_url
 
 
 def save_xkcd_comic(image_url, comic_number, folder_name='comics'):
     extension = get_file_extension_from_url(image_url)
     save_path = os.path.join(folder_name, f'xkcd_comic_{comic_number}{extension}')
     download_image(image_url, save_path)
+    return save_path
 
 
 def main():
@@ -29,8 +29,10 @@ def main():
     os.makedirs('comics', exist_ok=True)
 
     for comic_number in range(args.start_num, args.end_num + 1):
-        image_url = fetch_xkcd_comic(comic_number)
-        save_xkcd_comic(image_url, comic_number)
+        alt_text, image_url = fetch_xkcd_comic(comic_number)
+        print(alt_text)
+        saved_path = save_xkcd_comic(image_url, comic_number)
+        print(f"Комикс сохранен как {saved_path}")
 
 
 if __name__ == '__main__':
