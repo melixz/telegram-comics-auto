@@ -11,9 +11,12 @@ def get_image_files(directory):
 
 
 async def send_image(bot, chat_id, image_path):
-    with open(image_path, 'rb') as f:
-        await bot.send_photo(chat_id=chat_id, photo=f)
-        delete_file(image_path)  # Удаление файла после отправки
+    try:
+        with open(image_path, 'rb') as f:
+            await bot.send_photo(chat_id=chat_id, photo=f)
+            raise ValueError("Тестовое исключение для проверки удаления файла")
+    finally:
+        delete_file(image_path)
 
 
 def delete_file(file_path):
