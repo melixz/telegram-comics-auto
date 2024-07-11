@@ -45,9 +45,13 @@ async def post_images_to_telegram(directory, delay):
             images = get_image_files(directory)
 
             for image_path in images:
-                await send_image(bot, chat_id, image_path)
-                success, message = delete_file(image_path)
-                print(message)
+                try:
+                    await send_image(bot, chat_id, image_path)
+                except Exception as e:
+                    print(f"Ошибка при отправке изображения {image_path}: {e}")
+                finally:
+                    success, message = delete_file(image_path)
+                    print(message)
                 await asyncio.sleep(delay)
 
 
