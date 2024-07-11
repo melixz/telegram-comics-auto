@@ -29,14 +29,11 @@ def delete_file(file_path):
 
 async def post_images_to_telegram(directory, delay):
     load_dotenv()
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHANNEL_ID")
-
-    if not token:
-        raise ValueError("Переменная окружения TELEGRAM_BOT_TOKEN не установлена")
-
-    if not chat_id:
-        raise ValueError("Переменная окружения TELEGRAM_CHANNEL_ID не установлена")
+    try:
+        token = os.environ['TELEGRAM_BOT_TOKEN']
+        chat_id = os.environ['TELEGRAM_CHANNEL_ID']
+    except KeyError as e:
+        raise ValueError(f"Переменная окружения {e} не установлена")
 
     bot = telegram.Bot(token)
 
