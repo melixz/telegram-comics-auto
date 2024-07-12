@@ -42,8 +42,8 @@ async def send_image(bot, chat_id, image_path):
     try:
         with open(image_path, 'rb') as f:
             await bot.send_photo(chat_id=chat_id, photo=f)
-    finally:
-        delete_file(image_path)
+    except Exception as e:
+        print(f"Ошибка при отправке изображения {image_path}: {e}")
 
 
 def delete_file(file_path):
@@ -65,10 +65,7 @@ async def post_images_to_telegram(image_path):
     bot = telegram.Bot(token)
 
     async with bot:
-        try:
-            await send_image(bot, chat_id, image_path)
-        except Exception as e:
-            print(f"Ошибка при отправке изображения {image_path}: {e}")
+        await send_image(bot, chat_id, image_path)
 
 
 def main():
@@ -85,6 +82,7 @@ def main():
     print(f"Комикс сохранен как {saved_path}")
 
     asyncio.run(post_images_to_telegram(saved_path))
+    delete_file(saved_path)
 
 
 if __name__ == '__main__':
