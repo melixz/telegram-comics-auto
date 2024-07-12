@@ -41,7 +41,11 @@ async def post_images_to_telegram():
 
 
 def main():
-    asyncio.run(post_images_to_telegram())
+    try:
+        asyncio.run(post_images_to_telegram())
+    except ValueError as e:
+        print(e)
+        exit(1)
 
 
 if __name__ == '__main__':
