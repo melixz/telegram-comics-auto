@@ -3,9 +3,11 @@ import requests
 import asyncio
 from dotenv import load_dotenv
 import telegram
+import random
 
 
-def fetch_xkcd_comic(comic_number):
+def fetch_xkcd_comic():
+    comic_number = random.randint(1, 2957)
     url = f"https://xkcd.com/{comic_number}/info.0.json"
     response = requests.get(url)
     response.raise_for_status()
@@ -31,11 +33,11 @@ async def post_images_to_telegram():
 
     bot = telegram.Bot(token)
 
+    alt_text, image_url = fetch_xkcd_comic()
+    print(alt_text)
+
     async with bot:
-        for comic_number in range(1, 2958):
-            alt_text, image_url = fetch_xkcd_comic(comic_number)
-            print(alt_text)
-            await send_image(bot, chat_id, image_url, alt_text)
+        await send_image(bot, chat_id, image_url, alt_text)
 
 
 def main():
