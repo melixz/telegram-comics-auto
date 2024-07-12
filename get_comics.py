@@ -1,7 +1,8 @@
 import os
 import requests
-import argparse
-from common import download_image, get_file_extension_from_url
+import asyncio
+from dotenv import load_dotenv
+import telegram
 
 
 def fetch_xkcd_comic(comic_number):
@@ -13,26 +14,32 @@ def fetch_xkcd_comic(comic_number):
     return comic_data['alt'], image_url
 
 
-def save_xkcd_comic(image_url, comic_number, folder_name='comics'):
-    extension = get_file_extension_from_url(image_url)
-    save_path = os.path.join(folder_name, f'xkcd_comic_{comic_number}{extension}')
-    download_image(image_url, save_path)
-    return save_path
+async def send_image(bot, chat_id, image_url, caption):
+    try:
+        await bot.send_photo(chat_id=chat_id, photo=image_url, caption=caption)
+    except Exception as e:
+        print(f"Ошибка при отправке изображения {image_url}: {e}")
+
+
+async def post_images_to_telegram():
+    load_dotenv()
+    try:
+        token = os.environ['TELEGRAM_BOT_TOKEN']
+        chat_id = os.environ['TELEGRAM_CHANNEL_ID']
+    except KeyError as e:
+        raise ValueError(f"Переменная окружения {e} не установлена")
+
+    bot = telegram.Bot(token)
+
+    async with bot:
+        for comic_number in range(1, 2958):
+            alt_text, image_url = fetch_xkcd_comic(comic_number)
+            print(alt_text)
+            await send_image(bot, chat_id, image_url, alt_text)
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Загрузить комиксы XKCD последовательно')
-    parser.add_argument('--start_num', type=int, default=1, help='Начальный номер комикса XKCD')
-    parser.add_argument('--end_num', type=int, default=3539, help='Последний номер комикса XKCD')
-    args = parser.parse_args()
-
-    os.makedirs('comics', exist_ok=True)
-
-    for comic_number in range(args.start_num, args.end_num + 1):
-        alt_text, image_url = fetch_xkcd_comic(comic_number)
-        print(alt_text)
-        saved_path = save_xkcd_comic(image_url, comic_number)
-        print(f"Комикс сохранен как {saved_path}")
+    asyncio.run(post_images_to_telegram())
 
 
 if __name__ == '__main__':
