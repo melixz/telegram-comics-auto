@@ -54,11 +54,7 @@ def main():
 
     bot = telegram.Bot(token)
 
-    try:
-        asyncio.run(post_images_to_telegram(bot, chat_id))
-    except TelegramError as e:
-        print(f"Ошибка при отправке изображения: {e}")
-        exit(1)
+    asyncio.run(post_images_to_telegram(bot, chat_id))
 
 
 if __name__ == '__main__':
@@ -66,10 +62,10 @@ if __name__ == '__main__':
         main()
     except ValueError as e:
         print(f"Ошибка в main: {e}")
-        exit(1)
+        raise SystemExit(1)
     except TelegramError as e:
         print(f"Ошибка в main при работе с Telegram: {e}")
-        exit(1)
+        raise SystemExit(1)
     except Exception as e:
         print(f"Неизвестная ошибка в main: {e}")
-        exit(1)
+        raise SystemExit(1)
