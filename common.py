@@ -20,7 +20,9 @@ def get_file_extension_from_url(url):
 
 def main():
     url = "http://example.com/image.jpg"
-    save_path = "downloads/image.jpg"
+    save_dir = "downloads"
+    save_filename = "image.jpg"
+    save_path = os.path.join(save_dir, save_filename)
 
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
