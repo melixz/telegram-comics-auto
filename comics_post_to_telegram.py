@@ -38,7 +38,6 @@ async def post_images_to_telegram(bot, chat_id):
     if image_url is None:
         print("Не удалось получить данные комикса")
         return
-    print(alt_text)
     await send_image(bot, chat_id, image_url, alt_text)
 
 
