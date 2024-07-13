@@ -23,7 +23,13 @@ async def send_image(bot, chat_id, image_url, caption):
         print(f"Ошибка при отправке изображения {image_url}: {e}")
 
 
-async def post_images_to_telegram():
+async def post_images_to_telegram(bot, chat_id):
+    alt_text, image_url = fetch_xkcd_comic()
+    print(alt_text)
+    await send_image(bot, chat_id, image_url, alt_text)
+
+
+def main():
     load_dotenv()
     try:
         token = os.environ['TELEGRAM_BOT_TOKEN']
@@ -33,16 +39,8 @@ async def post_images_to_telegram():
 
     bot = telegram.Bot(token)
 
-    alt_text, image_url = fetch_xkcd_comic()
-    print(alt_text)
-
-    async with bot:
-        await send_image(bot, chat_id, image_url, alt_text)
-
-
-def main():
     try:
-        asyncio.run(post_images_to_telegram())
+        asyncio.run(post_images_to_telegram(bot, chat_id))
     except ValueError as e:
         print(e)
         exit(1)
