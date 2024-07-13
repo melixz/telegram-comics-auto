@@ -17,10 +17,7 @@ def fetch_xkcd_comic():
 
 
 async def send_image(bot, chat_id, image_url, caption):
-    try:
-        await bot.send_photo(chat_id=chat_id, photo=image_url, caption=caption)
-    except Exception as e:
-        print(f"Ошибка при отправке изображения {image_url}: {e}")
+    await bot.send_photo(chat_id=chat_id, photo=image_url, caption=caption)
 
 
 async def post_images_to_telegram(bot, chat_id):
@@ -41,10 +38,14 @@ def main():
 
     try:
         asyncio.run(post_images_to_telegram(bot, chat_id))
-    except ValueError as e:
-        print(e)
+    except Exception as e:
+        print(f"Ошибка при отправке изображения: {e}")
         exit(1)
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"Ошибка в main: {e}")
+        exit(1)
