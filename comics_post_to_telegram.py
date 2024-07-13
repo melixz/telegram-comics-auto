@@ -7,9 +7,12 @@ import random
 from requests.exceptions import HTTPError, RequestException
 from telegram.error import TelegramError
 
+MIN_COMIC_NUMBER = 1
+MAX_COMIC_NUMBER = 2957
+
 
 def fetch_xkcd_comic():
-    comic_number = random.randint(1, 2957)
+    comic_number = random.randint(MIN_COMIC_NUMBER, MAX_COMIC_NUMBER)
     url = f"https://xkcd.com/{comic_number}/info.0.json"
     try:
         response = requests.get(url)
