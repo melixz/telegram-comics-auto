@@ -1,11 +1,9 @@
 import os
 import requests
-import asyncio
 from dotenv import load_dotenv
-import telegram
+import telebot
 import random
 from requests.exceptions import HTTPError, RequestException
-from telegram.error import TelegramError
 
 MIN_COMIC_NUMBER = 1
 MAX_COMIC_NUMBER = 2957
@@ -29,19 +27,19 @@ def fetch_xkcd_comic():
     return comic_data['alt'], image_url
 
 
-async def send_image(bot, chat_id, image_url, caption):
+def send_image(bot, chat_id, image_url, caption):
     try:
-        await bot.send_photo(chat_id=chat_id, photo=image_url, caption=caption)
-    except TelegramError as e:
+        bot.send_photo(chat_id=chat_id, photo=image_url, caption=caption)
+    except telebot.apihelper.ApiException as e:
         print(f"Ошибка при отправке изображения {image_url}: {e}")
 
 
-async def post_images_to_telegram(bot, chat_id):
+def post_images_to_telegram(bot, chat_id):
     alt_text, image_url = fetch_xkcd_comic()
     if image_url is None:
         print("Не удалось получить данные комикса")
         return
-    await send_image(bot, chat_id, image_url, alt_text)
+    send_image(bot, chat_id, image_url, alt_text)
 
 
 def main():
@@ -52,9 +50,8 @@ def main():
     except KeyError as e:
         raise ValueError(f"Переменная окружения {e} не установлена")
 
-    bot = telegram.Bot(token)
-
-    asyncio.run(post_images_to_telegram(bot, chat_id))
+    bot = telebot.TeleBot(token)
+    post_images_to_telegram(bot, chat_id)
 
 
 if __name__ == '__main__':
@@ -63,7 +60,7 @@ if __name__ == '__main__':
     except ValueError as e:
         print(f"Ошибка в main: {e}")
         raise SystemExit(1)
-    except TelegramError as e:
+    except telebot.apihelper.ApiException as e:
         print(f"Ошибка в main при работе с Telegram: {e}")
         raise SystemExit(1)
     except Exception as e:
