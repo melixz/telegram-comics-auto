@@ -55,14 +55,4 @@ def main():
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except ValueError as e:
-        print(f"Ошибка в main: {e}")
-        raise SystemExit(1)
-    except telebot.apihelper.ApiException as e:
-        print(f"Ошибка в main при работе с Telegram: {e}")
-        raise SystemExit(1)
-    except Exception as e:
-        print(f"Неизвестная ошибка в main: {e}")
-        raise SystemExit(1)
+    main()
