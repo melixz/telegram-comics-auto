@@ -30,21 +30,11 @@ def post_images_to_telegram(bot, chat_id):
 
 def main():
     load_dotenv()
-    try:
-        token = os.environ['TELEGRAM_BOT_TOKEN']
-        chat_id = os.environ['TELEGRAM_CHANNEL_ID']
-    except KeyError as e:
-        raise ValueError(f"Переменная окружения {e} не установлена")
+    token = os.environ['TELEGRAM_BOT_TOKEN']
+    chat_id = os.environ['TELEGRAM_CHANNEL_ID']
 
     bot = telebot.TeleBot(token)
-    try:
-        post_images_to_telegram(bot, chat_id)
-    except (HTTPError, RequestException) as e:
-        print(f"Ошибка при получении данных комикса: {e}")
-    except telebot.apihelper.ApiException as e:
-        print(f"Ошибка при отправке изображения: {e}")
-    except Exception as e:
-        print(f"Неизвестная ошибка: {e}")
+    post_images_to_telegram(bot, chat_id)
 
 
 if __name__ == '__main__':
